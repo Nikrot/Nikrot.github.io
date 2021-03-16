@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"nikrot.github.io","root":"/","scheme":"Pisces","version":"7.7.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="题意: 给定$n$个二元组$(a_i,b_i)$，现在要将它们串成一个环，一个二元组的$b$元素不一定要与另一个二元组的$a$元素相邻。如果一个二元组的$X$元素与另一个二元组的$Y$元素的位置在环上相邻，则其权值为$\log_2\operatorname{lowbit}(X\oplus Y)$。特殊地，如果$X&#x3D;Y$则权值为$20$。定义一个环的权值为所有相邻二元组的权值的最小值，要求输出这些二">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Codeforces 1361C Johnny and Megan&#39;s Necklace">
+<meta property="og:url" content="http://nikrot.github.io/2020/06/26/solution-CF1361C/index.html">
+<meta property="og:site_name" content="Nikrot">
+<meta property="og:description" content="题意: 给定$n$个二元组$(a_i,b_i)$，现在要将它们串成一个环，一个二元组的$b$元素不一定要与另一个二元组的$a$元素相邻。如果一个二元组的$X$元素与另一个二元组的$Y$元素的位置在环上相邻，则其权值为$\log_2\operatorname{lowbit}(X\oplus Y)$。特殊地，如果$X&#x3D;Y$则权值为$20$。定义一个环的权值为所有相邻二元组的权值的最小值，要求输出这些二">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-06-26T04:00:42.000Z">
+<meta property="article:modified_time" content="2020-06-27T03:02:59.425Z">
+<meta property="article:author" content="Nikrot">
+<meta property="article:tag" content="codeforces">
+<meta property="article:tag" content="DSU">
+<meta property="article:tag" content="欧拉回路">
+<meta property="article:tag" content="二进制">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://nikrot.github.io/2020/06/26/solution-CF1361C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>Codeforces 1361C Johnny and Megan's Necklace | Nikrot</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Nikrot</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://nikrot.github.io/2020/06/26/solution-CF1361C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/%E7%99%BD%E9%87%91.png">
+      <meta itemprop="name" content="Nikrot">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Nikrot">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Codeforces 1361C Johnny and Megan's Necklace
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-06-26 12:00:42" itemprop="dateCreated datePublished" datetime="2020-06-26T12:00:42+08:00">2020-06-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-06-27 11:02:59" itemprop="dateModified" datetime="2020-06-27T11:02:59+08:00">2020-06-27</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>题意: 给定$n$个二元组$(a_i,b_i)$，现在要将它们串成一个环，一个二元组的$b$元素不一定要与另一个二元组的$a$元素相邻。如果一个二元组的$X$元素与另一个二元组的$Y$元素的位置在环上相邻，则其权值为$\log_2\operatorname{lowbit}(X\oplus Y)$。特殊地，如果$X=Y$则权值为$20$。定义一个环的权值为所有相邻二元组的权值的最小值，要求输出这些二元组能够组成的环的最大权值和对应最大权值的一种方案。</p>
+<p>做法:</p>
+<p>考虑从20开始从大到小枚举答案$Ans$。则每次只需考虑二元组中数字的最后$Ans$位即可。</p>
+<p>将每个二元组的$(a_i,b_i)$之间连边，如果有欧拉回路则说明$Ans$合法，否则$Ans$不合法。</p>
+<p>然而输出方案的代码让蒟蒻调试了好久…(其实主要还是求欧拉回路的<code>dfs</code>函数里那行删除无用边的复杂度<strong>看似</strong>正确的代码没有加）</p>
+<p>另一种删除无用边的写法类似于网络流的当前弧优化，这种方法复杂度正确。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> N = <span class="number">1000005</span>,M = <span class="number">1</span> &lt;&lt; <span class="number">20</span>;</span><br><span class="line"><span class="keyword">int</span> n,a[N],deg[M],f[M];</span><br><span class="line"><span class="keyword">int</span> head[M],v[N],w[N],nxt[N],ptr;pair&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; id[N];</span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">add_edge</span><span class="params">(<span class="keyword">int</span> uu,<span class="keyword">int</span> vv,pair&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; dd)</span></span></span><br><span class="line"><span class="function"></span>&#123;assert(ptr &lt; N);v[ptr] = vv;id[ptr] = dd;nxt[ptr] = head[uu];head[uu] = ptr++;&#125;</span><br><span class="line">pair&lt;<span class="keyword">int</span>,<span class="keyword">int</span>&gt; out[N];<span class="keyword">int</span> idx;</span><br><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">read</span><span class="params">(T &amp;num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    num = <span class="number">0</span>;<span class="keyword">int</span> ch = getchar();T fl = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (!<span class="built_in">isdigit</span>(ch) &amp;&amp; ch != <span class="number">45</span>) ch = getchar();</span><br><span class="line">    <span class="keyword">if</span> (ch == <span class="number">45</span>) fl = <span class="number">-1</span>,ch = getchar();</span><br><span class="line">    <span class="keyword">while</span> (<span class="built_in">isdigit</span>(ch)) </span><br><span class="line">    &#123;num = (num &lt;&lt; <span class="number">3</span>) + (num &lt;&lt; <span class="number">1</span>) + (ch - <span class="number">48</span>);ch = getchar();&#125;</span><br><span class="line">    num *= fl;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">write</span><span class="params">(T num)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">int</span> buf[<span class="number">55</span>];<span class="keyword">static</span> <span class="keyword">int</span> idx = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">if</span> (num == <span class="number">0</span>) &#123;<span class="built_in">putchar</span>(<span class="number">48</span>);<span class="keyword">return</span>;&#125;</span><br><span class="line">    <span class="keyword">if</span> (num &lt; <span class="number">0</span>) &#123;<span class="built_in">putchar</span>(<span class="number">45</span>);num = -num;&#125;</span><br><span class="line">    <span class="keyword">while</span> (num) &#123; buf[idx++] = num % <span class="number">10</span>;num /= <span class="number">10</span>; &#125;</span><br><span class="line">    <span class="keyword">while</span> (idx) <span class="built_in">putchar</span>(buf[--idx] + <span class="number">48</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">int</span> pos)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dfs</span><span class="params">(<span class="keyword">int</span> pos)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// for (int i = head[pos];i != -1;i = nxt[i])</span></span><br><span class="line">    <span class="comment">// &#123;</span></span><br><span class="line">    <span class="comment">//     while (nxt[i] != -1 &amp;&amp; w[nxt[i]]) nxt[i] = nxt[nxt[i]]; // 删掉后会TLE(然鹅其实复杂度还是错的)</span></span><br><span class="line">    <span class="comment">//     if (!w[i]) w[i] = w[i ^ 1] = 1,dfs(v[i]),out[++idx] = id[i];</span></span><br><span class="line">    <span class="comment">// &#125;</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> &amp;i = head[pos];i != <span class="number">-1</span>;i == <span class="number">-1</span> ? <span class="number">0</span> : i = nxt[i]) <span class="comment">// 这样写复杂度是正确的</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">int</span> tmp = i;</span><br><span class="line">        <span class="keyword">if</span> (!w[i]) w[i] = w[i ^ <span class="number">1</span>] = <span class="number">1</span>,dfs(v[i]),out[++idx] = id[tmp];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">getf</span><span class="params">(<span class="keyword">int</span> v)</span> </span>&#123;<span class="keyword">return</span> f[v] == v ? v : f[v] = getf(f[v]);&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span> <span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ios::sync_with_stdio(<span class="literal">false</span>);<span class="built_in">cin</span>.tie(<span class="number">0</span>);</span><br><span class="line">    read(n);<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>;i &lt;= n;i++) read(a[i * <span class="number">2</span> - <span class="number">1</span>]),read(a[i * <span class="number">2</span>]);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> ans = <span class="number">20</span>;ans &gt; <span class="number">0</span>;--ans)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>;i &lt;= n * <span class="number">2</span>;i++) a[i] &amp;= (<span class="number">1</span> &lt;&lt; ans) - <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; (<span class="number">1</span> &lt;&lt; ans);i++) deg[i] = <span class="number">0</span>,f[i] = i;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>;i &lt;= n * <span class="number">2</span>;i++) ++deg[a[i]];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>;i &lt;= n * <span class="number">2</span>;i += <span class="number">2</span>) f[getf(a[i])] = getf(a[i + <span class="number">1</span>]);</span><br><span class="line">        <span class="keyword">bool</span> ok = <span class="number">1</span>;<span class="keyword">int</span> cnt = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>;i &lt; (<span class="number">1</span> &lt;&lt; ans) &amp;&amp; ok;i++) <span class="keyword">if</span> (deg[i] % <span class="number">2</span>) ok = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>;i &lt;= n * <span class="number">2</span> &amp;&amp; ok;i++) <span class="keyword">if</span> (f[a[i]] == a[i]) ++cnt,f[a[i]] = <span class="number">-1</span>;</span><br><span class="line">        <span class="keyword">if</span> (!ok || cnt != <span class="number">1</span>) <span class="keyword">continue</span>;</span><br><span class="line">        write(ans);<span class="built_in">putchar</span>(<span class="string">'\n'</span>);</span><br><span class="line">        <span class="built_in">memset</span>(head,<span class="number">-1</span>,<span class="keyword">sizeof</span>(head));<span class="built_in">memset</span>(nxt,<span class="number">-1</span>,<span class="keyword">sizeof</span>(nxt));</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>;i &lt;= n * <span class="number">2</span>;i += <span class="number">2</span>)</span><br><span class="line">            add_edge(a[i],a[i + <span class="number">1</span>],&#123;i,i + <span class="number">1</span>&#125;),add_edge(a[i + <span class="number">1</span>],a[i],&#123;i + <span class="number">1</span>,i&#125;);</span><br><span class="line">        dfs(a[<span class="number">1</span>]);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = idx;i &gt; <span class="number">0</span>;--i)</span><br><span class="line">            write(out[i].first),<span class="built_in">putchar</span>(<span class="string">' '</span>),write(out[i].second),<span class="built_in">putchar</span>(<span class="string">' '</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="number">0</span> &lt;&lt; <span class="built_in">endl</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">1</span>;i &lt;= n * <span class="number">2</span>;i++) <span class="built_in">cout</span> &lt;&lt; i &lt;&lt; <span class="string">' '</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>Nikrot
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://nikrot.github.io/2020/06/26/solution-CF1361C/" title="Codeforces 1361C Johnny and Megan's Necklace">http://nikrot.github.io/2020/06/26/solution-CF1361C/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fa fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/codeforces/" rel="tag"># codeforces</a>
+              <a href="/tags/DSU/" rel="tag"># DSU</a>
+              <a href="/tags/%E6%AC%A7%E6%8B%89%E5%9B%9E%E8%B7%AF/" rel="tag"># 欧拉回路</a>
+              <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/" rel="tag"># 二进制</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/06/25/solution-CF575I/" rel="prev" title="CF575I Robots protection">
+      <i class="fa fa-chevron-left"></i> CF575I Robots protection
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/11/solution-CF1332F/" rel="next" title="Codeforces 1332F Independent Set">
+      Codeforces 1332F Independent Set <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Nikrot"
+      src="/images/%E7%99%BD%E9%87%91.png">
+  <p class="site-author-name" itemprop="name">Nikrot</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">21</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Nikrot</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.1
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://pisces.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.7.1
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'fc12abb15d09b58ecaa4',
+      clientSecret: 'f1e7d92e82af405b9a15f01b029932eca002502d',
+      repo        : 'Nikrot.github.io',
+      owner       : 'Nikrot',
+      admin       : ['Nikrot'],
+      id          : 'f2acd9b704828b52ee318d675a5b1baa',
+        language: 'zh-CN',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
