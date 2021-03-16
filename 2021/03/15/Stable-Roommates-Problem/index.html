@@ -28,12 +28,9 @@
 <meta property="og:description" content="稳定室友问题即稳定婚姻问题的无性别版($2n$个人找室友，两两配对，每个人都有自己的偏好，不能有不稳定对存在) 下面开始翻译 存在一种$O(n^2)$的算法，在1985年由$\texttt{Robert W. Irving}$ 提出。 $\text {Part I}$： 首先把一个人拆成两个人，按照稳定婚姻问题正常做，这样可以让每个人得到自己的一个候选人。为了方便，设偏好表为$T$。 考虑$p,q">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-14T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-03-16T03:29:26.295Z">
+<meta property="article:modified_time" content="2021-03-16T03:39:15.961Z">
 <meta property="article:author" content="Nikrot">
-<meta property="article:tag" content="codeforces">
-<meta property="article:tag" content="DSU">
-<meta property="article:tag" content="欧拉回路">
-<meta property="article:tag" content="二进制">
+<meta property="article:tag" content="StableRoommatesProblem">
 <meta name="twitter:card" content="summary">
 
 <link rel="canonical" href="http://nikrot.github.io/2021/03/15/Stable-Roommates-Problem/">
@@ -182,7 +179,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-03-16 11:29:26" itemprop="dateModified" datetime="2021-03-16T11:29:26+08:00">2021-03-16</time>
+                <time title="修改时间：2021-03-16 11:39:15" itemprop="dateModified" datetime="2021-03-16T11:39:15+08:00">2021-03-16</time>
               </span>
 
           
@@ -224,7 +221,7 @@
 </ol>
 <p>$\text{Part II}$：</p>
 <p>如果$T_q$满足稳定表的性质2，那么找到一组合法解，退出。</p>
-<p>定义一组旋转为$(x_0,y_0),(x_1,y_1),(x_2,y_2),\dots ,(x_{k-1},y_{k-1})$，使得所有$x_i$互不相同，且$\forall i\in [0,k),T’_{x_i,1}=y_i,T’_{x_i,2}=y_{i+1}\dots$（下标均为模$k$意义下）。如果$\exist i\in [0,k),|T’_i|&gt;2$,则一定存在一组旋转。要找到一组旋转，令$p_0$为满足上述条件的任一$i$,令$q_{j+1}=T_{p_j,0},p_{j+1}=\operatorname{Last}(T_{q_{j+1}})$，一直循环直到找到一个重复的$p_j$为止，则其第一次出现到其最后一次出现前为一次合法的旋转（就像Pollard-Rho里的环）。同时记从$i$到$p_j$为止的二元组为旋转的尾部（即$\rho$的尾巴）</p>
+<p>定义一组旋转为$(x_0,y_0),(x_1,y_1),(x_2,y_2),\dots ,(x_{k-1},y_{k-1})$，使得所有$x_i$互不相同，且$\forall i\in [0,k),T’_{x_i,1}=y_i,T’_{x_i,2}=y_{i+1}\dots$（下标均为模$k$意义下）。如果$\exists i\in [0,k),|T’_i|&gt;2$,则一定存在一组旋转。要找到一组旋转，令$p_0$为满足上述条件的任一$i$,令$q_{j+1}=T_{p_j,0},p_{j+1}=\operatorname{Last}(T_{q_{j+1}})$，一直循环直到找到一个重复的$p_j$为止，则其第一次出现到其最后一次出现前为一次合法的旋转（就像Pollard-Rho里的环）。同时记从$i$到$p_j$为止的二元组为旋转的尾部（即$\rho$的尾巴）</p>
 <p>一次旋转删除为:令$y_0$拒绝$x_0$（根据上文的条件此时$x_0$的候选人为$y_0$），使$x_0$与$y_1$匹配，同理令$y_1$拒绝$x_1$……这样循环地拒绝并重新选择候选人。如果任一$T_q$被删光则无解，否则返回判断步骤。容易发现$T’$的大小每次循环都会减小。</p>
 <p>为了达到$O(n^2)$的时间复杂度，$\operatorname{Rank}$函数需要被以一个数组的形式维护，同时维护当前旋转的起始点找到了哪一位置（在该位置之前的均不可能是起始点）</p>
 <p>同时也可以维护旋转的尾部（若有），每次若可能的话都从尾部开始以免重复寻找。</p>
@@ -255,10 +252,7 @@
 
       <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/codeforces/" rel="tag"># codeforces</a>
-              <a href="/tags/DSU/" rel="tag"># DSU</a>
-              <a href="/tags/%E6%AC%A7%E6%8B%89%E5%9B%9E%E8%B7%AF/" rel="tag"># 欧拉回路</a>
-              <a href="/tags/%E4%BA%8C%E8%BF%9B%E5%88%B6/" rel="tag"># 二进制</a>
+              <a href="/tags/StableRoommatesProblem/" rel="tag"># StableRoommatesProblem</a>
           </div>
 
         
@@ -352,7 +346,7 @@
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">21</span>
+        <span class="site-state-item-count">22</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
